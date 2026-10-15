@@ -586,31 +586,35 @@ body.nav-open {
   opacity: 1;
 }
 
+/* Featured cards span full width and stack vertically so screenshots
+   are never forced to fill an arbitrary height set by the text column. */
 .build-card.build-lg {
   grid-column: span 2;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .build-visual {
   position: relative;
-  min-height: 240px;
-  background: #1a1a1a;
+  background: #111;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  /* No fixed min-height — let the image set its own height */
 }
 
 .build-visual::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255,255,255,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
 }
 
+/* Large cards: image is full-width on top */
 .build-lg .build-visual {
-  flex: 0 0 45%;
-  min-height: auto;
+  width: 100%;
 }
 
 .build-visual::after {
@@ -628,23 +632,27 @@ body.nav-open {
   color: rgba(255, 255, 255, 0.12);
 }
 
-/* Build visual with real image */
+/* Build visual with real image — show the FULL screenshot */
 .build-visual--img {
   padding: 0;
+  background: #111;         /* neutral letterbox when image has bars */
   overflow: hidden;
 }
 
 .build-visual--img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  /* Use 'contain' so no part of the screenshot is cropped.
+     Width is always 100% of the card; height follows naturally. */
   display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center top;
+  /* Subtle zoom on hover — small value so we don't re-crop */
   transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .build-card:hover .build-visual--img img {
-  transform: scale(1.04);
+  transform: scale(1.02);
 }
 
 .build-visual--img::after {
@@ -809,30 +817,31 @@ body.nav-open {
 @media (max-width: 900px) {
   .builds-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
   .build-card.build-lg {
     grid-column: span 1;
     flex-direction: column;
   }
+  /* Remove any min-height that would force cropping on tablets */
   .build-visual {
-    min-height: 200px;
+    min-height: unset;
   }
 }
+
 @media (max-width: 600px) {
   .builds-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
   }
   .build-card {
     flex-direction: column;
   }
-  .build-visual {
-    min-height: 150px;
-  }
+  /* Keep images fully visible on small phones too */
   .build-visual--img img {
     width: 100%;
     height: auto;
-    object-fit: cover;
+    object-fit: contain;
   }
 }
 
